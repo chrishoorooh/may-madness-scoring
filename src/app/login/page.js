@@ -1,24 +1,58 @@
 "use client";
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { useAuth } from '@/context/AuthContext';
+import { useCallback, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
+
+/**
+ * iOS Safari often fails to deliver click to controls inside <form>.
+ * Keypad is outside the form; use one pointer path (Pointer Events cover touch + mouse).
+ */
+function KeypadKey({ label, className, onPress }) {
+  const run = useCallback(() => {
+    onPress();
+  }, [onPress]);
+
+  return (
+    <div
+      role="button"
+      tabIndex={0}
+      className={className}
+      style={{ WebkitTapHighlightColor: "transparent" }}
+      onPointerUp={(e) => {
+        if (e.pointerType === "mouse" && e.button !== 0) return;
+        e.preventDefault();
+        e.stopPropagation();
+        run();
+      }}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          run();
+        }
+      }}
+    >
+      {label}
+    </div>
+  );
+}
 
 export default function LoginPage() {
-  const [pin, setPin] = useState('');
-  const [error, setError] = useState('');
+  const [pin, setPin] = useState("");
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const { login } = useAuth();
+  const lastInputAt = useRef(0);
 
   async function handleSubmit(e) {
     e.preventDefault();
-    setError('');
+    setError("");
     setLoading(true);
 
     try {
       await login(pin);
-      router.push('/scoring');
+      router.push("/scoring");
     } catch (err) {
       setError(err.message);
     } finally {
@@ -27,95 +61,107 @@ export default function LoginPage() {
   }
 
   function handlePinInput(digit) {
-    if (pin.length < 4) {
-      setPin(prev => prev + digit);
-    }
+    const t = Date.now();
+    if (t - lastInputAt.current < 45) return;
+    lastInputAt.current = t;
+    setPin((prev) => (prev.length < 4 ? prev + digit : prev));
   }
 
   function handleBackspace() {
-    setPin(prev => prev.slice(0, -1));
+    const t = Date.now();
+    if (t - lastInputAt.current < 45) return;
+    lastInputAt.current = t;
+    setPin((prev) => prev.slice(0, -1));
   }
 
   function handleClear() {
-    setPin('');
+    const t = Date.now();
+    if (t - lastInputAt.current < 45) return;
+    lastInputAt.current = t;
+    setPin("");
   }
+
+  const keyClass =
+    "flex h-16 select-none items-center justify-center rounded-xl bg-secondary text-2xl font-semibold touch-manipulation cursor-pointer active:opacity-80";
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
-      <div className="w-full max-w-sm">
+      <div className="relative z-[60] isolate w-full max-w-sm">
         <div className="text-center mb-8">
-          <img src="/logo.png" alt="May Madness" className="h-24 w-24 mx-auto mb-4 object-contain" />
+          <img
+            src="/logo.png"
+            alt="May Madness"
+            className="h-24 w-24 mx-auto mb-4 object-contain pointer-events-none"
+          />
           <h1 className="text-2xl font-bold">Player Login</h1>
           <p className="text-foreground/70 mt-2">Enter your 4-digit PIN</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* PIN Display */}
+        <form id="login-form" onSubmit={handleSubmit} className="space-y-6">
           <div className="flex justify-center gap-3">
-            {[0, 1, 2, 3].map(i => (
+            {[0, 1, 2, 3].map((i) => (
               <div
                 key={i}
-                className="w-14 h-16 rounded-xl bg-secondary border-2 border-white/10 flex items-center justify-center text-3xl font-bold"
+                className="flex h-16 w-14 items-center justify-center rounded-xl border-2 border-white/10 bg-secondary text-3xl font-bold"
               >
-                {pin[i] ? '•' : ''}
+                {pin[i] ? "•" : ""}
               </div>
             ))}
           </div>
 
           {error && (
-            <div className="text-center text-red-400 text-sm">{error}</div>
+            <div className="text-center text-sm text-red-400">{error}</div>
           )}
-
-          {/* Number Pad */}
-          <div className="grid grid-cols-3 gap-3">
-            {[1, 2, 3, 4, 5, 6, 7, 8, 9].map(digit => (
-              <button
-                key={digit}
-                type="button"
-                onClick={() => handlePinInput(String(digit))}
-                className="h-16 rounded-xl bg-secondary text-2xl font-semibold hover:bg-secondary/80 transition touch-manipulation active:opacity-80"
-              >
-                {digit}
-              </button>
-            ))}
-            <button
-              type="button"
-              onClick={handleClear}
-              className="h-16 rounded-xl bg-red-500/20 text-red-400 text-sm font-semibold hover:bg-red-500/30 transition touch-manipulation active:opacity-80"
-            >
-              Clear
-            </button>
-            <button
-              type="button"
-              onClick={() => handlePinInput('0')}
-              className="h-16 rounded-xl bg-secondary text-2xl font-semibold hover:bg-secondary/80 transition touch-manipulation active:opacity-80"
-            >
-              0
-            </button>
-            <button
-              type="button"
-              onClick={handleBackspace}
-              className="h-16 rounded-xl bg-secondary text-xl hover:bg-secondary/80 transition touch-manipulation active:opacity-80"
-            >
-              ←
-            </button>
-          </div>
-
-          {/* Submit Button */}
-          <button
-            type="submit"
-            disabled={pin.length !== 4 || loading}
-            className="w-full py-4 rounded-xl bg-primary font-semibold text-white disabled:opacity-50 disabled:cursor-not-allowed hover:bg-primary-light transition touch-manipulation active:opacity-90"
-          >
-            {loading ? 'Logging in...' : 'Enter'}
-          </button>
         </form>
 
+        {/* Outside <form>: avoids iOS Safari swallowing taps on keypad controls */}
+        <div
+          className="mt-6 grid grid-cols-3 gap-3"
+          role="group"
+          aria-label="PIN keypad"
+        >
+          {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((digit) => (
+            <KeypadKey
+              key={digit}
+              label={String(digit)}
+              onPress={() => handlePinInput(String(digit))}
+              className={keyClass}
+            />
+          ))}
+          <KeypadKey
+            label="Clear"
+            onPress={handleClear}
+            className="flex h-16 select-none cursor-pointer items-center justify-center rounded-xl bg-red-500/20 text-sm font-semibold text-red-400 touch-manipulation active:opacity-80"
+          />
+          <KeypadKey
+            label="0"
+            onPress={() => handlePinInput("0")}
+            className={keyClass}
+          />
+          <KeypadKey
+            label="←"
+            onPress={handleBackspace}
+            className="flex h-16 select-none cursor-pointer items-center justify-center rounded-xl bg-secondary text-xl touch-manipulation active:opacity-80"
+          />
+        </div>
+
+        <div className="mt-6">
+          <button
+            type="submit"
+            form="login-form"
+            disabled={pin.length !== 4 || loading}
+            className="w-full cursor-pointer rounded-xl bg-primary py-4 font-semibold text-white transition hover:bg-primary-light touch-manipulation active:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {loading ? "Logging in..." : "Enter"}
+          </button>
+        </div>
+
         <div className="mt-6 text-center">
-          <a href="/" className="text-primary hover:underline text-sm">← Back to Home</a>
+          <a href="/" className="text-sm text-primary hover:underline">
+            ← Back to Home
+          </a>
         </div>
       </div>
     </div>
   );
 }
-

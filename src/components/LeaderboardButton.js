@@ -13,6 +13,11 @@ export default function LeaderboardButton() {
     return null;
   }
 
+  // Login uses full-screen touch targets; skip FAB + panel entirely on this route
+  if (pathname === '/login') {
+    return null;
+  }
+
   return (
     <>
       {/* Floating Button */}
