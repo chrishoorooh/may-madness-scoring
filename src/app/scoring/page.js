@@ -1,21 +1,20 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import Navbar from '@/components/Navbar';
 import { useAuth } from '@/context/AuthContext';
+import { goToLogin } from '@/lib/goToLogin';
 
 export default function ScoringPage() {
   const { player, loading: authLoading } = useAuth();
-  const router = useRouter();
   const [rounds, setRounds] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!authLoading && !player) {
-      router.push('/login');
+      goToLogin();
     }
-  }, [player, authLoading, router]);
+  }, [player, authLoading]);
 
   useEffect(() => {
     if (player) {

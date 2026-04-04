@@ -4,17 +4,25 @@ import { useState } from 'react';
 import { usePathname } from 'next/navigation';
 import LeaderboardPanel from './LeaderboardPanel';
 
+function normalizeRoute(path) {
+  if (path == null || path === "") return "/";
+  const noQuery = path.split("?")[0].split("#")[0];
+  const trimmed = noQuery.replace(/\/+$/, "") || "/";
+  return trimmed;
+}
+
 export default function LeaderboardButton() {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
+  const route = normalizeRoute(pathname);
 
   // Don't show on the leaderboard page since we're already viewing it
-  if (pathname === '/leaderboard') {
+  if (route === "/leaderboard") {
     return null;
   }
 
   // Login uses full-screen touch targets; skip FAB + panel entirely on this route
-  if (pathname === '/login') {
+  if (route === "/login") {
     return null;
   }
 
@@ -29,8 +37,8 @@ export default function LeaderboardButton() {
         🏆
       </button>
 
-      {/* Leaderboard Panel */}
-      <LeaderboardPanel isOpen={isOpen} onClose={() => setIsOpen(false)} />
+      {/* Mount only when open — avoids fixed full-viewport layers (backdrop/panel) sitting above page content on iOS when “closed”. */}
+      {isOpen && <LeaderboardPanel onClose={() => setIsOpen(false)} />}
     </>
   );
 }

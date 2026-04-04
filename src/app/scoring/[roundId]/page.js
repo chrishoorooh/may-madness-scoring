@@ -1,9 +1,11 @@
 "use client";
 
 import { useState, useEffect, use, useRef } from 'react';
+import Link from "next/link";
 import { useRouter } from 'next/navigation';
 import Navbar from '@/components/Navbar';
 import { useAuth } from '@/context/AuthContext';
+import { goToLogin } from '@/lib/goToLogin';
 import { calculateCourseHandicap, distributeStrokes, formatScoreRelativeToPar } from '@/lib/golf-utils-client';
 
 export default function RoundScoringPage({ params }) {
@@ -23,9 +25,9 @@ export default function RoundScoringPage({ params }) {
 
   useEffect(() => {
     if (!authLoading && !player) {
-      router.push('/login');
+      goToLogin();
     }
-  }, [player, authLoading, router]);
+  }, [player, authLoading]);
 
   useEffect(() => {
     if (player && roundId) {
@@ -175,7 +177,7 @@ export default function RoundScoringPage({ params }) {
         <main className="mx-auto max-w-4xl px-6 py-8 text-center">
           <h1 className="text-2xl font-bold mb-4">Round Not Available</h1>
           <p className="text-foreground/70">This round hasn't been configured with a course yet.</p>
-          <a href="/scoring" className="text-primary hover:underline mt-4 inline-block">← Back to Rounds</a>
+          <Link href="/scoring" prefetch={false} className="text-primary hover:underline mt-4 inline-block">← Back to Rounds</Link>
         </main>
       </div>
     );
@@ -191,7 +193,7 @@ export default function RoundScoringPage({ params }) {
       <main className="mx-auto max-w-4xl px-6 py-8">
         {/* Header */}
         <div className="mb-6">
-          <a href="/scoring" className="text-primary hover:underline text-sm">← Back to Rounds</a>
+          <Link href="/scoring" prefetch={false} className="text-primary hover:underline text-sm">← Back to Rounds</Link>
           <h1 className="text-2xl font-bold mt-2">{round.name}</h1>
           <p className="text-foreground/70">
             {courseData?.course?.name} - {courseData?.tee?.name}

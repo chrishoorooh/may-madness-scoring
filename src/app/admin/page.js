@@ -1,9 +1,10 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import Navbar from '@/components/Navbar';
 import { useAuth } from '@/context/AuthContext';
+import { goToLogin } from '@/lib/goToLogin';
+import { useRouter } from 'next/navigation';
 
 export default function AdminPage() {
   const { player, isAdmin, loading: authLoading } = useAuth();
@@ -19,7 +20,7 @@ export default function AdminPage() {
   useEffect(() => {
     if (!authLoading) {
       if (!player) {
-        router.push('/login');
+        goToLogin();
       } else if (!isAdmin) {
         router.push('/scoring');
       }

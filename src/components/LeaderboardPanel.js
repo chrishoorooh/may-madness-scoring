@@ -3,19 +3,16 @@
 import { useState, useEffect } from 'react';
 import { formatScoreRelativeToPar } from '@/lib/golf-utils-client';
 
-export default function LeaderboardPanel({ isOpen, onClose }) {
+export default function LeaderboardPanel({ onClose }) {
   const [leaderboard, setLeaderboard] = useState([]);
   const [lastUpdated, setLastUpdated] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (isOpen) {
-      fetchLeaderboard();
-      // Poll for updates every 10 seconds while open
-      const interval = setInterval(fetchLeaderboard, 10000);
-      return () => clearInterval(interval);
-    }
-  }, [isOpen]);
+    fetchLeaderboard();
+    const interval = setInterval(fetchLeaderboard, 10000);
+    return () => clearInterval(interval);
+  }, []);
 
   async function fetchLeaderboard() {
     try {
@@ -46,20 +43,12 @@ export default function LeaderboardPanel({ isOpen, onClose }) {
 
   return (
     <>
-      {/* Backdrop */}
-      <div 
-        className={`fixed inset-0 bg-black/50 z-40 transition-opacity duration-300 ${
-          isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
-        }`}
+      <div
+        className="fixed inset-0 z-40 bg-black/50"
         onClick={onClose}
       />
 
-      {/* Panel — pointer-events-none when closed so iOS doesn’t keep a full-screen invisible hit target */}
-      <div 
-        className={`fixed top-0 right-0 h-full w-full max-w-md bg-background border-l border-white/10 z-50 transform transition-transform duration-300 ease-out ${
-          isOpen ? 'translate-x-0 pointer-events-auto' : 'translate-x-full pointer-events-none'
-        }`}
-      >
+      <div className="fixed top-0 right-0 z-50 flex h-full w-full max-w-md flex-col border-l border-white/10 bg-background">
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-white/10">
           <div>
@@ -79,7 +68,7 @@ export default function LeaderboardPanel({ isOpen, onClose }) {
         </div>
 
         {/* Content */}
-        <div className="overflow-y-auto h-[calc(100%-80px)] p-4">
+        <div className="min-h-0 flex-1 overflow-y-auto p-4">
           {loading ? (
             <div className="text-center py-8 text-foreground/70">Loading...</div>
           ) : (

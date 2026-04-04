@@ -1,6 +1,7 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/context/AuthContext";
+import BfCacheRecover from "@/components/BfCacheRecover";
 import LeaderboardButton from "@/components/LeaderboardButton";
 
 const geistSans = Geist({
@@ -23,8 +24,10 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <AuthProvider>
-          {children}
+          <BfCacheRecover />
+          {/* FAB/panel first; main content wrapped so z-1 sits below fixed z-30/40/50 overlays only where they draw */}
           <LeaderboardButton />
+          <div className="relative z-[1] min-h-dvh">{children}</div>
         </AuthProvider>
       </body>
     </html>

@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getPlayerByPin } from '@/lib/data-utils';
-import { cookies } from 'next/headers';
-
+import { sessionCookieSecureFromRequest } from '@/lib/sessionCookieSecure';
 export async function POST(request) {
   try {
     const { pin } = await request.json();
@@ -16,18 +15,18 @@ export async function POST(request) {
       return NextResponse.json({ error: 'Invalid PIN' }, { status: 401 });
     }
     
-    // Set a session cookie with player ID
-    const cookieStore = await cookies();
-    cookieStore.set('playerId', player.id, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: 60 * 60 * 24 * 7 // 1 week
-    });
-    
-    // Return player info (without PIN)
+    // Return player info (without PIN). Set cookie on the response object so Set-Cookie is
+    // reliably applied (Safari + Next route handlers can miss cookies().set alone).
     const { pin: _, ...playerData } = player;
-    return NextResponse.json({ player: playerData });
+    const res = NextResponse.json({ player: playerData });
+    res.cookies.set("playerId", player.id, {
+      httpOnly: true,
+      secure: sessionCookieSecureFromRequest(request),
+      sameSite: "lax",
+      path: "/",
+      maxAge: 60 * 60 * 24 * 7,
+    });
+    return res;
     
   } catch (error) {
     console.error('Login error:', error);

@@ -1,8 +1,10 @@
 "use client";
 
+import Link from "next/link";
 import FeatureCard from "@/components/FeatureCard";
 import Navbar from "@/components/Navbar";
 import { useAuth } from "@/context/AuthContext";
+import { goToLoginPageClick } from "@/lib/goToLogin";
 
 export default function Home() {
   const { player, loading } = useAuth();
@@ -32,11 +34,15 @@ export default function Home() {
           </p>
           
           {player ? (
-            <a href="/scoring" className="inline-block rounded-full bg-primary px-8 py-3 font-semibold text-white transition hover:bg-primary-light">
+            <Link href="/scoring" prefetch={false} className="inline-block rounded-full bg-primary px-8 py-3 font-semibold text-white transition hover:bg-primary-light">
               Enter Scores
-            </a>
+            </Link>
           ) : (
-            <a href="/login" className="inline-block rounded-full bg-primary px-8 py-3 font-semibold text-white transition hover:bg-primary-light">
+            <a
+              href="/login"
+              onClick={goToLoginPageClick}
+              className="inline-block rounded-full bg-primary px-8 py-3 font-semibold text-white transition hover:bg-primary-light"
+            >
               Player Login
             </a>
           )}
@@ -44,27 +50,37 @@ export default function Home() {
 
         {/* Feature Cards */}
         <div className="mt-20 grid gap-6 md:grid-cols-3">
-          <a href="/leaderboard">
+          <Link href="/leaderboard" prefetch={false}>
             <FeatureCard
               emoji="🏆"
               title="Live Leaderboard"
               description="Real-time team standings updated as scores come in."
             />
-          </a>
-          <a href={player ? "/scoring" : "/login"}>
-            <FeatureCard
-              emoji="⛳"
-              title="Score Entry"
-              description="Enter your scores hole-by-hole for each round."
-            />
-          </a>
-          <a href={player?.isAdmin ? "/admin" : "/leaderboard"}>
+          </Link>
+          {player ? (
+            <Link href="/scoring" prefetch={false}>
+              <FeatureCard
+                emoji="⛳"
+                title="Score Entry"
+                description="Enter your scores hole-by-hole for each round."
+              />
+            </Link>
+          ) : (
+            <a href="/login" onClick={goToLoginPageClick}>
+              <FeatureCard
+                emoji="⛳"
+                title="Score Entry"
+                description="Enter your scores hole-by-hole for each round."
+              />
+            </a>
+          )}
+          <Link href={player?.isAdmin ? "/admin" : "/leaderboard"} prefetch={false}>
             <FeatureCard
               emoji="👥"
               title="Teams"
               description="4 teams of 2 competing for the championship."
             />
-          </a>
+          </Link>
         </div>
 
         {/* Tournament Info */}
