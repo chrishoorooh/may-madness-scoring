@@ -1,0 +1,60 @@
+{
+  "players": [
+    {
+      "id": "player-1",
+      "name": "Chris Cruz",
+      "pin": "1111",
+      "handicapIndex": 9.5,
+      "isAdmin": true
+    },
+    {
+      "id": "player-2",
+      "name": "Bob Grice",
+      "pin": "2222",
+      "handicapIndex": 9.9,
+      "isAdmin": false
+    },
+    {
+      "id": "player-3",
+      "name": "Ty Katsos",
+      "pin": "3333",
+      "handicapIndex": 11,
+      "isAdmin": false
+    },
+    {
+      "id": "player-4",
+      "name": "Nick Ward",
+      "pin": "4444",
+      "handicapIndex": 18,
+      "isAdmin": false
+    },
+    {
+      "id": "player-5",
+      "name": "Jon Starek",
+      "pin": "5555",
+      "handicapIndex": 18.8,
+      "isAdmin": false
+    },
+    {
+      "id": "player-6",
+      "name": "Brett Erwin",
+      "pin": "6666",
+      "handicapIndex": 5.7,
+      "isAdmin": false
+    },
+    {
+      "id": "player-7",
+      "name": "Chad Bergman",
+      "pin": "7777",
+      "handicapIndex": 16.5,
+      "isAdmin": false
+    },
+    {
+      "id": "player-8",
+      "name": "Larry Duncan",
+      "pin": "8888",
+      "handicapIndex": 18,
+      "isAdmin": false
+    }
+  ]
+}

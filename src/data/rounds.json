@@ -1,0 +1,28 @@
+{
+  "rounds": [
+    {
+      "id": "round-1",
+      "name": "Round 1",
+      "courseId": "the-ledges",
+      "teeId": "blue",
+      "date": null,
+      "status": "upcoming"
+    },
+    {
+      "id": "round-2",
+      "name": "Round 2",
+      "courseId": "black-desert",
+      "teeId": "weiskopf-blue",
+      "date": null,
+      "status": "upcoming"
+    },
+    {
+      "id": "round-3",
+      "name": "Round 3",
+      "courseId": "copper-rock",
+      "teeId": "black",
+      "date": null,
+      "status": "upcoming"
+    }
+  ]
+}

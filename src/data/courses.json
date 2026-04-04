@@ -1,0 +1,104 @@
+{
+  "courses": [
+    {
+      "id": "black-desert",
+      "name": "Black Desert Golf Course",
+      "location": "St. George, Utah",
+      "tees": [
+        {
+          "id": "black-desert-black",
+          "name": "Black Desert (Black)",
+          "color": "black",
+          "slopeRating": 134,
+          "courseRating": 73.3,
+          "par": 72,
+          "dataFile": "course-info/black-desert-black-desert-black-tee.csv"
+        },
+        {
+          "id": "weiskopf-blue",
+          "name": "Weiskopf (Blue)",
+          "color": "blue",
+          "slopeRating": 128,
+          "courseRating": 71.2,
+          "par": 72,
+          "dataFile": "course-info/black-desert-weiskoph-blue-tee.csv"
+        }
+      ]
+    },
+    {
+      "id": "the-ledges",
+      "name": "The Ledges Golf Course",
+      "location": "St. George, Utah",
+      "tees": [
+        {
+          "id": "blue",
+          "name": "Blue",
+          "color": "blue",
+          "slopeRating": 123,
+          "courseRating": 71.3,
+          "par": 72,
+          "dataFile": "course-info/the-ledges-blue-tee .csv"
+        },
+        {
+          "id": "white",
+          "name": "White",
+          "color": "white",
+          "slopeRating": 119,
+          "courseRating": 69.3,
+          "par": 72,
+          "dataFile": "course-info/the-ledges-white-tee.csv"
+        }
+      ]
+    },
+    {
+      "id": "copper-rock",
+      "name": "Copper Rock Golf Course",
+      "location": "Hurricane, Utah",
+      "tees": [
+        {
+          "id": "black",
+          "name": "Black",
+          "color": "black",
+          "slopeRating": 141,
+          "courseRating": 73.1,
+          "par": 72,
+          "dataFile": "course-info/copper-rock-golf-course-black-tee .csv"
+        },
+        {
+          "id": "gold",
+          "name": "Gold",
+          "color": "gold",
+          "slopeRating": 138,
+          "courseRating": 70.6,
+          "par": 72,
+          "dataFile": "course-info/copper-rock-golf-course-gold-tee .csv"
+        }
+      ]
+    },
+    {
+      "id": "sunbrook",
+      "name": "Sunbrook Golf Club - The Pointe & Woodbridge",
+      "location": "St. George, Utah",
+      "tees": [
+        {
+          "id": "black",
+          "name": "Black",
+          "color": "black",
+          "slopeRating": 133,
+          "courseRating": 73.9,
+          "par": 72,
+          "dataFile": "course-info/sunbrook-golf-club-the-pointe-and-woodbridge-black-tee.csv"
+        },
+        {
+          "id": "gold",
+          "name": "Gold",
+          "color": "gold",
+          "slopeRating": 129,
+          "courseRating": 71.9,
+          "par": 72,
+          "dataFile": "course-info/sunbrook-golf-club-the-pointe-and-woodbridge-gold-tee .csv"
+        }
+      ]
+    }
+  ]
+}

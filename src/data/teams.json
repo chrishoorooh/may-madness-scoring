@@ -1,0 +1,36 @@
+{
+  "teams": [
+    {
+      "id": "team-1",
+      "name": "Terps",
+      "playerIds": [
+        "player-1",
+        "player-2"
+      ]
+    },
+    {
+      "id": "team-2",
+      "name": "Buffs",
+      "playerIds": [
+        "player-3",
+        "player-4"
+      ]
+    },
+    {
+      "id": "team-3",
+      "name": "Rams",
+      "playerIds": [
+        "player-5",
+        "player-6"
+      ]
+    },
+    {
+      "id": "team-4",
+      "name": "JayCats",
+      "playerIds": [
+        "player-7",
+        "player-8"
+      ]
+    }
+  ]
+}

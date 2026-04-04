@@ -1,65 +1,114 @@
-import Image from "next/image";
+"use client";
+
+import FeatureCard from "@/components/FeatureCard";
+import Navbar from "@/components/Navbar";
+import { useAuth } from "@/context/AuthContext";
 
 export default function Home() {
+  const { player, loading } = useAuth();
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.js file.
+    <div className="min-h-screen bg-background">
+      <Navbar />
+
+      {/* Hero Section */}
+      <main className="mx-auto max-w-6xl px-6 py-20">
+        <div className="text-center">
+          <div className="mb-6 flex justify-center">
+            <img src="/logo.png" alt="May Madness Spring Classic" className="h-48 w-48 object-contain" />
+          </div>
+          <h1 className="mb-6 text-5xl font-bold tracking-tight">
+            Welcome to{" "}
+            <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+              May Madness
+            </span>
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+          <p className="mx-auto mb-2 text-2xl font-semibold text-silver">
+            O.B.I. Spring Classic Golf Tournament
           </p>
+          <p className="mx-auto mb-10 max-w-2xl text-lg text-foreground/70">
+            Track scores, and see where your team stands throughout
+            the tournament. Tee it up and get started!
+          </p>
+          
+          {player ? (
+            <a href="/scoring" className="inline-block rounded-full bg-primary px-8 py-3 font-semibold text-white transition hover:bg-primary-light">
+              Enter Scores
+            </a>
+          ) : (
+            <a href="/login" className="inline-block rounded-full bg-primary px-8 py-3 font-semibold text-white transition hover:bg-primary-light">
+              Player Login
+            </a>
+          )}
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
+
+        {/* Feature Cards */}
+        <div className="mt-20 grid gap-6 md:grid-cols-3">
+          <a href="/leaderboard">
+            <FeatureCard
+              emoji="🏆"
+              title="Live Leaderboard"
+              description="Real-time team standings updated as scores come in."
             />
-            Deploy Now
           </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
+          <a href={player ? "/scoring" : "/login"}>
+            <FeatureCard
+              emoji="⛳"
+              title="Score Entry"
+              description="Enter your scores hole-by-hole for each round."
+            />
           </a>
+          <a href={player?.isAdmin ? "/admin" : "/leaderboard"}>
+            <FeatureCard
+              emoji="👥"
+              title="Teams"
+              description="4 teams of 2 competing for the championship."
+            />
+          </a>
+        </div>
+
+        {/* Tournament Info */}
+        <div className="mt-20 rounded-2xl bg-secondary border border-white/10 p-8">
+          <h2 className="text-2xl font-bold mb-6 text-center">How It Works</h2>
+          <div className="grid md:grid-cols-2 gap-8">
+            <div>
+              <h3 className="font-semibold text-primary mb-2">🏌️ Team Scoring</h3>
+              <p className="text-foreground/70">
+                8 golfers split into 4 teams of 2. For each hole, the best net score 
+                between teammates counts toward the team total.
+              </p>
+            </div>
+            <div>
+              <h3 className="font-semibold text-primary mb-2">📊 Net Scores</h3>
+              <p className="text-foreground/70">
+                Your handicap strokes are automatically calculated based on your 
+                handicap index and the course slope rating.
+              </p>
+            </div>
+            <div>
+              <h3 className="font-semibold text-primary mb-2">🎯 3 Rounds</h3>
+              <p className="text-foreground/70">
+                Each player completes 3 rounds of golf. Scores accumulate across 
+                all rounds for the final team standings.
+              </p>
+            </div>
+            <div>
+              <h3 className="font-semibold text-primary mb-2">📱 Live Updates</h3>
+              <p className="text-foreground/70">
+                The leaderboard updates in real-time as players enter their scores, 
+                so everyone can follow along.
+              </p>
+            </div>
+          </div>
         </div>
       </main>
+
+      {/* Footer */}
+      <footer className="border-t border-white/10 px-6 py-8">
+        <div className="mx-auto max-w-6xl text-center text-foreground/50">
+          <p>May Madness Spring Classic • Tee It Up ⛳</p>
+        </div>
+      </footer>
     </div>
   );
 }
