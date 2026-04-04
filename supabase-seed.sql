@@ -12,7 +12,7 @@ INSERT INTO players (id, name, pin, handicap_index, is_admin) VALUES
   ('player-5', 'Jon Starek', '5555', 18.8, FALSE),
   ('player-6', 'Brett Erwin', '6666', 5.7, FALSE),
   ('player-7', 'Chad Bergman', '7777', 16.5, FALSE),
-  ('player-8', 'Larry Duncan', '8888', 18, FALSE);
+  ('player-8', 'Blake Crawford', '8888', 18, FALSE);
 
 -- Insert Teams
 INSERT INTO teams (id, name) VALUES
