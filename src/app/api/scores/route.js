@@ -28,21 +28,35 @@ export async function GET(request) {
 export async function POST(request) {
   try {
     const cookieStore = await cookies();
-    const playerId = cookieStore.get('playerId')?.value;
+    const sessionPlayerId = cookieStore.get('playerId')?.value;
     
-    if (!playerId) {
+    if (!sessionPlayerId) {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     }
     
     const body = await request.json();
-    const { roundId, holes } = body;
+    const { roundId, holes, targetPlayerId } = body;
     
     if (!roundId) {
       return NextResponse.json({ error: 'Round ID is required' }, { status: 400 });
     }
+
+    const sessionPlayer = await getPlayerById(sessionPlayerId);
+    let scorePlayerId = sessionPlayerId;
+
+    if (targetPlayerId != null && targetPlayerId !== '') {
+      if (targetPlayerId !== sessionPlayerId && !sessionPlayer?.isAdmin) {
+        return NextResponse.json({ error: 'Only admins can enter scores for other players' }, { status: 403 });
+      }
+      scorePlayerId = targetPlayerId;
+    }
     
-    // Get player and round info
-    const player = await getPlayerById(playerId);
+    // Get player (whose scorecard we save) and round info
+    const player = await getPlayerById(scorePlayerId);
+    if (!player) {
+      return NextResponse.json({ error: 'Player not found' }, { status: 404 });
+    }
+
     const round = await getRoundById(roundId);
     
     if (!round) {
@@ -71,7 +85,7 @@ export async function POST(request) {
     
     // Build score data
     const scoreData = {
-      playerId,
+      playerId: scorePlayerId,
       roundId,
       courseHandicap,
       strokes,

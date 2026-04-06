@@ -16,6 +16,8 @@ export default function AdminPage() {
   const [rounds, setRounds] = useState([]);
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [scoreEntryPlayerId, setScoreEntryPlayerId] = useState('');
+  const [scoreEntryRoundId, setScoreEntryRoundId] = useState('');
 
   useEffect(() => {
     if (!authLoading) {
@@ -111,18 +113,24 @@ export default function AdminPage() {
         </div>
 
         {/* Tabs */}
-        <div className="flex gap-2 mb-6">
-          {['players', 'teams', 'rounds'].map(tab => (
+        <div className="flex flex-wrap gap-2 mb-6">
+          {[
+            { id: 'players', label: 'Players' },
+            { id: 'teams', label: 'Teams' },
+            { id: 'rounds', label: 'Rounds' },
+            { id: 'scores', label: 'Enter scores' },
+          ].map(({ id, label }) => (
             <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
+              key={id}
+              type="button"
+              onClick={() => setActiveTab(id)}
               className={`px-4 py-2 rounded-lg font-semibold transition ${
-                activeTab === tab
+                activeTab === id
                   ? 'bg-primary text-white'
                   : 'bg-secondary hover:bg-secondary/80'
               }`}
             >
-              {tab.charAt(0).toUpperCase() + tab.slice(1)}
+              {label}
             </button>
           ))}
         </div>
@@ -278,6 +286,60 @@ export default function AdminPage() {
                     )}
                   </div>
                 ))}
+              </div>
+            )}
+
+            {activeTab === 'scores' && (
+              <div className="max-w-xl space-y-6 rounded-2xl border border-white/10 bg-secondary p-6">
+                <p className="text-sm text-foreground/70">
+                  Open the same score-entry screen players use, but save holes for whoever you select.
+                  Only rounds with a course and tee configured are listed.
+                </p>
+                <div>
+                  <label className="mb-1 block text-xs text-foreground/50">Player</label>
+                  <select
+                    value={scoreEntryPlayerId}
+                    onChange={(e) => setScoreEntryPlayerId(e.target.value)}
+                    className="w-full rounded-lg bg-background px-3 py-2"
+                  >
+                    <option value="">Select player…</option>
+                    {players.map((p) => (
+                      <option key={p.id} value={p.id}>
+                        {p.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="mb-1 block text-xs text-foreground/50">Round</label>
+                  <select
+                    value={scoreEntryRoundId}
+                    onChange={(e) => setScoreEntryRoundId(e.target.value)}
+                    className="w-full rounded-lg bg-background px-3 py-2"
+                  >
+                    <option value="">Select round…</option>
+                    {rounds
+                      .filter((r) => r.courseId && r.teeId)
+                      .map((r) => (
+                        <option key={r.id} value={r.id}>
+                          {r.name}
+                        </option>
+                      ))}
+                  </select>
+                </div>
+                <button
+                  type="button"
+                  disabled={!scoreEntryPlayerId || !scoreEntryRoundId}
+                  onClick={() => {
+                    if (!scoreEntryPlayerId || !scoreEntryRoundId) return;
+                    router.push(
+                      `/admin/scoring/${scoreEntryRoundId}?forPlayer=${encodeURIComponent(scoreEntryPlayerId)}`
+                    );
+                  }}
+                  className="w-full rounded-xl bg-primary py-3 font-semibold text-white transition hover:bg-primary-light disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  Open scorecard
+                </button>
               </div>
             )}
           </>

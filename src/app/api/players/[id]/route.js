@@ -5,6 +5,17 @@ import { cookies } from 'next/headers';
 export async function GET(request, { params }) {
   try {
     const { id } = await params;
+    const cookieStore = await cookies();
+    const currentPlayerId = cookieStore.get('playerId')?.value;
+    if (!currentPlayerId) {
+      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
+    }
+    const currentPlayer = await getPlayerById(currentPlayerId);
+
+    if (currentPlayerId !== id && !currentPlayer?.isAdmin) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
+    }
+
     const player = await getPlayerById(id);
     
     if (!player) {
